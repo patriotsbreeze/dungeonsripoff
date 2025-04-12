@@ -23,7 +23,7 @@ public class DungeonEnemy : MonoBehaviour
         //insert AI/bot
     }
     void AttackPlayer() {
-        if()
+
     }
     void takeDamage(float takeDamage) 
     {
