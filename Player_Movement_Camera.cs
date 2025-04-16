@@ -7,6 +7,7 @@ public class Player_Movement_Camera : MonoBehaviour
     public float speed = 20f;
     public float sens = 10f;
     public float jump = 20f;
+
     private bool isGround, jumpRequest;
     private float xRot;
     private Vector3 playerDirection;
@@ -19,7 +20,12 @@ public class Player_Movement_Camera : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0, -0.5f, 0);
         Cursor.lockState = CursorLockMode.Locked;
-        rb.freezeRotation = true;
+
+        /* 
+            I feel like keeping this off might make the game more fun and unique
+        */
+        
+        //rb.freezeRotation = true;
     }
 
     void Update()
@@ -29,6 +35,11 @@ public class Player_Movement_Camera : MonoBehaviour
         CameraMovement();
         playerDirection = new Vector3(horizontal, 0, veritcal);
         mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+        /*
+            In order for the Jump to work, you must 
+            make the Ground tag assigned to an object
+        */
         if (Input.GetKeyDown(KeyCode.Space) && isGround)
         {
             jumpRequest = true;
@@ -36,6 +47,9 @@ public class Player_Movement_Camera : MonoBehaviour
     }
     void FixedUpdate()
     {
+        /*
+            character movement is in fixedUpdate to make better use of the physics engine
+        */
         Movement();
     if (jumpRequest)
         {
