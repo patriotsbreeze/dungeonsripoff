@@ -22,7 +22,8 @@ public class Player_Movement_Camera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         /* 
-            I feel like keeping this off might make the game more fun and unique
+            I feel like keeping this off might
+            make the game more fun and unique
         */
         
         //rb.freezeRotation = true;
@@ -48,7 +49,8 @@ public class Player_Movement_Camera : MonoBehaviour
     void FixedUpdate()
     {
         /*
-            character movement is in fixedUpdate to make better use of the physics engine
+            character movement is in fixedUpdate to 
+            make better use of the physics engine
         */
         Movement();
     if (jumpRequest)
