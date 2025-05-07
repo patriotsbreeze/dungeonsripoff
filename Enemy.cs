@@ -1,38 +1,107 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class DungeonEnemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-    public float health = 100f;
-    public float attack = 10f;
-    public float range = 5f;
-    public float moveSpeed = 2.5f;
+    public Transform player;
+    public float AttackDistance;
+    private NavMeshAgent agent;
+    private Animator m_Animator;
 
-    private Transform player;
-    private Animator animator;
+    public LayerMask whatIsGround, whatIsPlayer;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    Vector3 WalkPoint;
+    bool walkPointSet;
+    public float walkPointRange;
+
+    bool alreadyAttack;
+    public float timeBetweenAttacks;
+
+    public float sightRange, attackRange;
+    bool playerInSightRange, playerInAttackRange;
+
+    void Awake()
     {
-        player = GameObject.FindGameObjectsWithTag("Player").transform;
-        animator = GetComponent<Animator>();
+        player = GameObject.Find("Player").transform;
+        agent = GetComponent<NavMeshAgent>();
+        m_Animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //insert AI/bot
-    }
-    void AttackPlayer() {
+        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
+        playerInAttackRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
 
-    }
-    void takeDamage(float takeDamage) 
-    {
-        health -= takeDamage;
-        if(health <= 0) {
-            Die();
+        if (!playerInSightRange && !playerInAttackRange) Patroling();
+        if (playerInSightRange && !playerInAttackRange) Chasing();
+        if (playerInSightRange && playerInAttackRange) Attacking();
+        //attack animation + follow player
+        /*m_Distance = Vector3.Distance(agent.transform.position, player.position);
+        
+        if (m_Distance < AttackDistance)
+        {
+            agent.isStopped = true;
+            //m_Animator.SetBool("Attack", true);
         }
-    }
-    void Die() {
-        Destroy(gameObject);
+        else
+        {
+            agent.isStopped = false;
+            //m_Animator.SetBool("Attack", false); 
+            agent.destination = player.position;
+        }
+
+        //movement animation
+        if (agent.velocity.magnitude != 0f)
+        {
+            //m_Animator.SetBool("Running", true);
+        }
+        else
+        {
+            //m_Animator.SetBool("Ruinning", false);
+        }
+        */
+        /*void OnAnimatorMove()
+        {
+            if (m_Animator.GetBool("Running"))
+            {
+                agent.speed = (m_Animator.deltaPosition / Time.deltaTime).magnitude;
+            }
+            if (m_Animator.GetBool("Attack") == false)
+            {
+                agent.speed = (m_Animator.deltaPosition / Time.deltaTime).magnitude;
+            }
+        } */
+        void Patroling()
+        {
+            if(!walkPointSet)
+            {
+                float randomZ = Random.Range(-walkPointRange, walkPointRange);
+                float randomX = Random.Range(-walkPointRange, walkPointRange);
+
+                WalkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+
+                if (Physics.Raycast(WalkPoint, -transform.up, 2f, whatIsGround)) walkPointSet = true;
+            }
+            if (walkPointSet) agent.SetDestination(WalkPoint);
+
+            Vector3 distanecToWalkPoint = transform.position - WalkPoint;
+
+            if (distanecToWalkPoint.magnitude < 1f) walkPointSet = false;
+
+
+        }
+        void Chasing()
+        {
+            agent.SetDestination(player.position);
+        }
+        void Attacking()
+        {
+            agent.SetDestination(transform.position);
+
+            transform.LookAt(player);
+        }
+
     }
 }
