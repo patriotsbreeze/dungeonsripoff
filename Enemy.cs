@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public class Enemy_AI_Movement : MonoBehaviour
 {
     public Transform player;
     public float AttackDistance;
